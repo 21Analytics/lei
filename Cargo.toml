@@ -1,0 +1,5 @@
+[package]
+name = "lei"
+version = "0.1.0"
+authors = [ "Harm Aarts <harm.aarts@21analytics.ch>" ]
+edition = "2018"
