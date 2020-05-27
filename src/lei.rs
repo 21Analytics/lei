@@ -9,6 +9,12 @@ pub struct LEI {
 #[derive(Debug, PartialEq)]
 pub struct ParseLEIError;
 
+impl std::fmt::Display for ParseLEIError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Malformed LEI")
+    }
+}
+
 impl std::fmt::Display for LEI {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.lei)
