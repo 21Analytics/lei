@@ -1,3 +1,4 @@
+#[must_use]
 pub fn is(s: &str) -> bool {
     REGISTRATION_AUTHORITIES.contains(&s)
 }

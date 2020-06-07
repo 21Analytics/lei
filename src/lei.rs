@@ -35,10 +35,12 @@ impl std::str::FromStr for LEI {
 
 impl LEI {
     /// The issuing Local Operating Unit
+    #[must_use]
     pub fn lou(&self) -> String {
         self.lei[..4].into()
     }
 
+    #[must_use]
     pub fn entity(&self) -> String {
         self.lei[6..18].into()
     }
