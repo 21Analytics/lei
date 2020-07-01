@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::str::FromStr;
 
 /// A 20-character Legal Entity Identifier
@@ -74,6 +75,21 @@ impl<S: ScalarValue> GraphQLScalar for LEI {
 }
 
 impl LEI {
+    pub fn random() -> Result<Self, ParseLEIError> {
+        let mut rng = rand::thread_rng();
+        let prefix: String = (0..4)
+            .map(|_| rng.sample(rand::distributions::Alphanumeric))
+            .collect::<String>()
+            .to_uppercase();
+        let infix: String = (0..12)
+            .map(|_| rng.sample(rand::distributions::Alphanumeric))
+            .collect::<String>()
+            .to_uppercase();
+        // Use placeholder 0s to compute needed checksum
+        let checksum = 98 - mod_97(&format!("{}00{}00", prefix, infix))?;
+        Self::from_str(&format!("{}00{}{:02}", prefix, infix, checksum))
+    }
+
     /// The issuing Local Operating Unit
     #[must_use]
     pub fn lou(&self) -> String {
@@ -145,5 +161,10 @@ mod test {
         assert_eq!(LEI::from_str("2594007XIACKNMUAW224"), Err(ParseLEIError));
         // non-zero reserved characters
         assert_eq!(LEI::from_str("2594017XIACKNMUAW223"), Err(ParseLEIError));
+    }
+
+    #[test]
+    fn test_random() {
+        LEI::random().unwrap();
     }
 }
