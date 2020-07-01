@@ -1,13 +1,17 @@
+use std::str::FromStr;
+
 /// A 20-character Legal Entity Identifier
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct LEI {
     lei: String,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct ParseLEIError;
+
+impl std::error::Error for ParseLEIError {}
 
 impl std::fmt::Display for ParseLEIError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -30,6 +34,42 @@ impl std::str::FromStr for LEI {
         } else {
             Err(ParseLEIError)
         }
+    }
+}
+
+impl rusqlite::types::ToSql for LEI {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        Ok(rusqlite::types::ToSqlOutput::from(self.lei.clone()))
+    }
+}
+
+impl rusqlite::types::FromSql for LEI {
+    fn column_result(value: rusqlite::types::ValueRef<'_>) -> rusqlite::types::FromSqlResult<Self> {
+        match value {
+            rusqlite::types::ValueRef::Text(s) => {
+                let s = std::str::from_utf8(s)
+                    .map_err(|e| rusqlite::types::FromSqlError::Other(Box::new(e)))?;
+                Self::from_str(s).map_err(|e| rusqlite::types::FromSqlError::Other(Box::new(e)))
+            }
+            _ => Err(rusqlite::types::FromSqlError::InvalidType),
+        }
+    }
+}
+
+#[juniper::graphql_scalar()]
+impl<S: ScalarValue> GraphQLScalar for LEI {
+    fn resolve(&self) -> juniper::Value {
+        juniper::Value::scalar(self.lei.clone())
+    }
+
+    fn from_input_value(v: &InputValue) -> Option<Self> {
+        v.as_scalar_value()
+            .and_then(|v| v.as_str())
+            .map(|s| LEI { lei: s.into() })
+    }
+
+    fn from_str<'a>(value: ScalarToken<'a>) -> juniper::ParseScalarResult<'a, S> {
+        <String as juniper::ParseScalarValue<S>>::from_str(value)
     }
 }
 
