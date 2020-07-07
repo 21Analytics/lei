@@ -66,7 +66,7 @@ impl<S: ScalarValue> GraphQLScalar for LEI {
     fn from_input_value(v: &InputValue) -> Option<Self> {
         v.as_scalar_value()
             .and_then(|v| v.as_str())
-            .map(|s| LEI { lei: s.into() })
+            .and_then(|s| LEI::from_str(s).ok())
     }
 
     fn from_str<'a>(value: ScalarToken<'a>) -> juniper::ParseScalarResult<'a, S> {
