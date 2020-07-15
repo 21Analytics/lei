@@ -4,7 +4,8 @@ use std::str::FromStr;
 /// A 20-character Legal Entity Identifier
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
 pub struct LEI {
     lei: String,
 }
