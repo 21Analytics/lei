@@ -11,13 +11,24 @@ pub struct LEI {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ParseLEIError;
+pub struct ParseLEIError {
+    cause: String,
+}
+
+impl ParseLEIError {
+    #[must_use]
+    pub fn cause(cause: &str) -> Self {
+        Self {
+            cause: cause.into(),
+        }
+    }
+}
 
 impl std::error::Error for ParseLEIError {}
 
 impl std::fmt::Display for ParseLEIError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Malformed LEI")
+        write!(f, "Malformed LEI: {}", self.cause)
     }
 }
 
@@ -31,11 +42,16 @@ impl std::str::FromStr for LEI {
     type Err = ParseLEIError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() == 20 && &s[4..6] == "00" && validate_checksum(s) {
-            Ok(Self { lei: s.into() })
-        } else {
-            Err(ParseLEIError)
+        if s.len() != 20 {
+            return Err(ParseLEIError::cause("invalid length"));
         }
+        if &s[4..6] != "00" {
+            return Err(ParseLEIError::cause("non-zero reserved characters"));
+        }
+        if !validate_checksum(s) {
+            return Err(ParseLEIError::cause("invalid checksum"));
+        }
+        Ok(Self { lei: s.into() })
     }
 }
 
@@ -114,7 +130,7 @@ fn mod_97(address: &str) -> Result<u32, ParseLEIError> {
             let multiplier = if digit > 9 { 100 } else { 10 };
             Ok((acc * multiplier + digit) % 97)
         } else {
-            Err(ParseLEIError)
+            Err(ParseLEIError::cause("invalid character"))
         }
     })
 }
@@ -133,8 +149,11 @@ mod test {
         assert_eq!(mod_97("97"), Ok(0));
         assert_eq!(mod_97("98"), Ok(1));
         assert_eq!(mod_97("9799"), Ok(2));
-        assert_eq!(mod_97("-1"), Err(ParseLEIError));
-        assert_eq!(mod_97("123#"), Err(ParseLEIError));
+        assert_eq!(mod_97("-1"), Err(ParseLEIError::cause("invalid character")));
+        assert_eq!(
+            mod_97("123#"),
+            Err(ParseLEIError::cause("invalid character"))
+        );
     }
 
     #[test]
@@ -151,17 +170,26 @@ mod test {
 
     #[test]
     fn test_malformed() {
-        assert_eq!(LEI::from_str(""), Err(ParseLEIError));
-        // garbage
-        assert_eq!(LEI::from_str("#@%$^#%$#%#@%$^#%$#%"), Err(ParseLEIError));
-        // too short
-        assert_eq!(LEI::from_str("2594007XIACKNUAW223"), Err(ParseLEIError));
-        // too long
-        assert_eq!(LEI::from_str("2594007XIACKNUAW22334"), Err(ParseLEIError));
-        // wrong checksum
-        assert_eq!(LEI::from_str("2594007XIACKNMUAW224"), Err(ParseLEIError));
-        // non-zero reserved characters
-        assert_eq!(LEI::from_str("2594017XIACKNMUAW223"), Err(ParseLEIError));
+        assert_eq!(
+            LEI::from_str(""),
+            Err(ParseLEIError::cause("invalid length"))
+        );
+        assert_eq!(
+            LEI::from_str("2594007XIACKNUAW223"),
+            Err(ParseLEIError::cause("invalid length"))
+        );
+        assert_eq!(
+            LEI::from_str("2594007XIACKNUAW22334"),
+            Err(ParseLEIError::cause("invalid length"))
+        );
+        assert_eq!(
+            LEI::from_str("2594007XIACKNMUAW224"),
+            Err(ParseLEIError::cause("invalid checksum"))
+        );
+        assert_eq!(
+            LEI::from_str("2594017XIACKNMUAW223"),
+            Err(ParseLEIError::cause("non-zero reserved characters"))
+        );
     }
 
     #[test]
