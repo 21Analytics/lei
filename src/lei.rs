@@ -136,7 +136,7 @@ fn mod_97(address: &str) -> Result<u32, ParseLEIError> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
     use std::str::FromStr;
 
