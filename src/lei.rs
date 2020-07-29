@@ -55,24 +55,14 @@ impl std::str::FromStr for LEI {
     }
 }
 
-impl rusqlite::types::ToSql for LEI {
-    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
-        Ok(rusqlite::types::ToSqlOutput::from(self.lei.clone()))
+impl std::convert::TryFrom<String> for LEI {
+    type Error = ParseLEIError;
+    fn try_from(from: String) -> Result<Self, Self::Error> {
+        Self::from_str(&from)
     }
 }
 
-impl rusqlite::types::FromSql for LEI {
-    fn column_result(value: rusqlite::types::ValueRef<'_>) -> rusqlite::types::FromSqlResult<Self> {
-        match value {
-            rusqlite::types::ValueRef::Text(s) => {
-                let s = std::str::from_utf8(s)
-                    .map_err(|e| rusqlite::types::FromSqlError::Other(Box::new(e)))?;
-                Self::from_str(s).map_err(|e| rusqlite::types::FromSqlError::Other(Box::new(e)))
-            }
-            _ => Err(rusqlite::types::FromSqlError::InvalidType),
-        }
-    }
-}
+util::sql_via_string!(LEI);
 
 #[juniper::graphql_scalar()]
 impl<S: ScalarValue> GraphQLScalar for LEI {
