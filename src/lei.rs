@@ -37,10 +37,10 @@ impl std::str::FromStr for LEI {
     }
 }
 
-impl std::convert::TryFrom<String> for LEI {
+impl std::convert::TryFrom<&str> for LEI {
     type Error = ParseLEIError;
-    fn try_from(from: String) -> Result<Self, Self::Error> {
-        Self::from_str(&from)
+    fn try_from(from: &str) -> Result<Self, Self::Error> {
+        Self::from_str(from)
     }
 }
 
