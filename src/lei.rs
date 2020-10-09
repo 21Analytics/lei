@@ -98,12 +98,12 @@ fn validate_checksum(address: &str) -> bool {
 fn mod_97(address: &str) -> Result<u32, ParseLEIError> {
     address.as_bytes().iter().try_fold(0, |acc, c| {
         // Convert '0'-'Z' to 0-35
-        if let Some(digit) = (*c as char).to_digit(36) {
-            let multiplier = if digit > 9 { 100 } else { 10 };
-            Ok((acc * multiplier + digit) % 97)
-        } else {
-            Err(ParseLEIError("invalid character"))
-        }
+        (*c as char)
+            .to_digit(36)
+            .map_or(Err(ParseLEIError("invalid character")), |digit| {
+                let multiplier = if digit > 9 { 100 } else { 10 };
+                Ok((acc * multiplier + digit) % 97)
+            })
     })
 }
 
