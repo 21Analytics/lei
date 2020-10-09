@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 diesel = "1.4.5"
-futures = "0.3.5"
+futures = "0.3.6"
 juniper = { git = "https://github.com/graphql-rust/juniper", rev = "0dcfb850e113a545c4d66840c55fce8eb910133e" }
 rand = "0.7.3"
 rusqlite = "0.23.1"
