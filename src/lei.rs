@@ -4,6 +4,7 @@ use std::str::FromStr;
 /// A 20-character Legal Entity Identifier
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
+/// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(transparent)]
 pub struct LEI {
@@ -26,9 +27,6 @@ impl std::str::FromStr for LEI {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.len() != 20 {
             return Err(ParseLEIError("invalid length"));
-        }
-        if &s[4..6] != "00" {
-            return Err(ParseLEIError("non-zero reserved characters"));
         }
         if !validate_checksum(s) {
             return Err(ParseLEIError("invalid checksum"));
@@ -141,6 +139,8 @@ mod tests {
         LEI::from_str(&"54930084UKLVMY22DS16").unwrap();
         LEI::from_str(&"213800WSGIIZCXF1P572").unwrap();
         LEI::from_str(&"5493000IBP32UQZ0KL24").unwrap();
+        // Standard Chartered Bank
+        LEI::from_str(&"RILFO74KP1CM8P6PCT96").unwrap();
     }
 
     #[test]
@@ -166,12 +166,6 @@ mod tests {
                 .unwrap_err()
                 .to_string(),
             "ParseLeiError: invalid checksum"
-        );
-        assert_eq!(
-            LEI::from_str("2594017XIACKNMUAW223")
-                .unwrap_err()
-                .to_string(),
-            "ParseLeiError: non-zero reserved characters"
         );
     }
 
