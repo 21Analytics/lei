@@ -9,5 +9,5 @@ diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "426b8130cf3f1
 juniper = { git = "https://github.com/graphql-rust/juniper", rev = "509438a5bee704737fd1165dbec8a31cdfe8bd39" }
 rand = "0.7.3"
 serde = { version = "1.0", features = [ "derive" ] }
-thiserror = "1.0.22"
+thiserror = "1.0.23"
 util = { path = "../util" }
