@@ -10,4 +10,4 @@ juniper = { git = "https://github.com/graphql-rust/juniper", rev = "509438a5bee7
 rand = "0.7.3"
 serde = { version = "1.0", features = [ "derive" ] }
 thiserror = "1.0.23"
-util = { path = "../util" }
+util = { git = "https://gitlab.com/21analytics/rust-crates.git", branch = "master" }
