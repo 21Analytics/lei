@@ -80,12 +80,12 @@ impl LEI {
     /// The issuing Local Operating Unit
     #[must_use]
     pub fn lou(&self) -> String {
-        self.lei[..4].into()
+        self.lei.get(..4).unwrap().into()
     }
 
     #[must_use]
     pub fn entity(&self) -> String {
-        self.lei[6..18].into()
+        self.lei.get(6..18).unwrap().into()
     }
 }
 
