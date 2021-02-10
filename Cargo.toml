@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "426b8130cf3f1be10c059d585bcfa0192ea2a561" }
-juniper = { git = "https://github.com/graphql-rust/juniper", rev = "509438a5bee704737fd1165dbec8a31cdfe8bd39" }
+juniper = { git = "https://github.com/graphql-rust/juniper", rev = "52483718ed51b050df517aac26bb868eaf1932b7" }
 rand = "0.7.3"
 serde = { version = "1.0", features = [ "derive" ] }
 thiserror = "1.0.23"
