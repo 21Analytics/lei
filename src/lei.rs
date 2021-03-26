@@ -5,12 +5,14 @@ use std::str::FromStr;
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
 /// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
+#[allow(clippy::clippy::upper_case_acronyms)]
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
 }
 
+#[allow(clippy::clippy::upper_case_acronyms)]
 #[derive(thiserror::Error, Debug, PartialEq)]
 #[error("ParseLeiError: {0}")]
 pub struct ParseLEIError(&'static str);
