@@ -8,6 +8,6 @@ edition = "2018"
 diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "426b8130cf3f1be10c059d585bcfa0192ea2a561" }
 juniper = "0.15.4"
 rand = "0.7.3"
-serde = { version = "1.0.117", features = [ "derive" ] }
+serde = { version = "1.0.125", features = [ "derive" ] }
 thiserror = "1.0.24"
 util = { git = "https://gitlab.com/21analytics/rust-crates.git", branch = "master" }
