@@ -6,7 +6,16 @@ use std::str::FromStr;
 /// IBAN numbers.
 /// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
 #[allow(clippy::clippy::upper_case_acronyms)]
-#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Clone,
+    Debug,
+    PartialEq,
+    serde::Serialize,
+    serde::Deserialize,
+    diesel::FromSqlRow,
+    diesel::AsExpression,
+)]
+#[sql_type = "diesel::sql_types::Text"]
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
