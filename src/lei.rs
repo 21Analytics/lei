@@ -21,7 +21,6 @@ pub struct LEI {
     lei: String,
 }
 
-#[allow(clippy::clippy::upper_case_acronyms)]
 #[derive(thiserror::Error, Debug, PartialEq)]
 #[error("ParseLeiError: {0}")]
 pub struct ParseLEIError(&'static str);
