@@ -5,7 +5,6 @@ use std::str::FromStr;
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
 /// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
-#[allow(clippy::upper_case_acronyms)]
 #[derive(
     Clone,
     Debug,
