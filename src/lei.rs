@@ -139,15 +139,15 @@ mod tests {
     #[test]
     fn test_happy_parse() {
         // from https://lei.info/portal/resources/lei-code/
-        let lei = LEI::from_str(&"2594007XIACKNMUAW223").unwrap();
+        let lei = LEI::from_str("2594007XIACKNMUAW223").unwrap();
         assert_eq!(lei.lou(), String::from("2594"));
         assert_eq!(lei.entity(), String::from("7XIACKNMUAW2"));
         // from https://en.wikipedia.org/wiki/Legal_Entity_Identifier
-        LEI::from_str(&"54930084UKLVMY22DS16").unwrap();
-        LEI::from_str(&"213800WSGIIZCXF1P572").unwrap();
-        LEI::from_str(&"5493000IBP32UQZ0KL24").unwrap();
+        LEI::from_str("54930084UKLVMY22DS16").unwrap();
+        LEI::from_str("213800WSGIIZCXF1P572").unwrap();
+        LEI::from_str("5493000IBP32UQZ0KL24").unwrap();
         // Standard Chartered Bank
-        LEI::from_str(&"RILFO74KP1CM8P6PCT96").unwrap();
+        LEI::from_str("RILFO74KP1CM8P6PCT96").unwrap();
     }
 
     #[test]
