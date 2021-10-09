@@ -9,5 +9,5 @@ diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "77fe24318fd96
 juniper = "0.15.7"
 rand = "0.7.3"
 serde = { version = "1.0.130", features = [ "derive" ] }
-thiserror = "1.0.29"
+thiserror = "1.0.30"
 util = { git = "https://gitlab.com/21analytics/rust-crates.git", branch = "master" }
