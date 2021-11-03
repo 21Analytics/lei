@@ -5,6 +5,7 @@ authors = ["21Analytics <info@21analytics.ch>"]
 edition = "2021"
 
 [dependencies]
+codegen = { path = "../codegen" }
 diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "77fe24318fd96f636a2b4205ec0c5f3aa61e33f8" }
 juniper = "0.15.7"
 rand = "0.7.3"

@@ -13,6 +13,7 @@ use std::str::FromStr;
     serde::Deserialize,
     diesel::FromSqlRow,
     diesel::AsExpression,
+    codegen::GraphQLScalar,
 )]
 #[sql_type = "diesel::sql_types::Text"]
 #[serde(transparent)]
@@ -52,21 +53,6 @@ impl TryFrom<&str> for LEI {
 }
 
 util::sql_via_string!(LEI);
-
-#[juniper::graphql_scalar()]
-impl<S: ScalarValue> GraphQLScalar for LEI {
-    fn resolve(&self) -> juniper::Value {
-        juniper::Value::scalar(self.lei.clone())
-    }
-
-    fn from_input_value(v: &InputValue) -> Option<Self> {
-        v.as_string_value().and_then(|s| LEI::from_str(s).ok())
-    }
-
-    fn from_str<'a>(value: ScalarToken<'a>) -> juniper::ParseScalarResult<'a, S> {
-        <String as juniper::ParseScalarValue<S>>::from_str(value)
-    }
-}
 
 impl LEI {
     pub fn random() -> Result<Self, ParseLEIError> {
