@@ -9,6 +9,6 @@ codegen = { path = "../codegen" }
 diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "77fe24318fd96f636a2b4205ec0c5f3aa61e33f8" }
 juniper = "0.15.7"
 rand = "0.7.3"
-serde = { version = "1.0.130", features = [ "derive" ] }
+serde = { version = "1.0.131", features = [ "derive" ] }
 thiserror = "1.0.30"
 util = { git = "https://gitlab.com/21analytics/rust-crates.git", rev = "3a86031e481d427c5244f94e3eb6120d1d39eee8" }
