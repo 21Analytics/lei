@@ -6,9 +6,9 @@ edition = "2021"
 
 [dependencies]
 codegen = { path = "../codegen" }
-diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "77fe24318fd96f636a2b4205ec0c5f3aa61e33f8" }
+diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "37ec18f46ced2d6e9197414156fdb705d7a61426" }
 juniper = "0.15.7"
 rand = "0.7.3"
 serde = { version = "1.0.132", features = [ "derive" ] }
 thiserror = "1.0.30"
-util = { git = "https://gitlab.com/21analytics/rust-crates.git", rev = "3a86031e481d427c5244f94e3eb6120d1d39eee8" }
+util = { git = "https://gitlab.com/21analytics/rust-crates.git", rev = "af5aa195bb86845b3f0194e53ccb5bb4b3dc4070" }
