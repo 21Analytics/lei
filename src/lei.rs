@@ -15,7 +15,7 @@ use std::str::FromStr;
     diesel::AsExpression,
     codegen::GraphQLScalar,
 )]
-#[sql_type = "diesel::sql_types::Text"]
+#[diesel(sql_type = diesel::sql_types::Text)]
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
