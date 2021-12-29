@@ -52,7 +52,30 @@ impl TryFrom<&str> for LEI {
     }
 }
 
-util::sql_via_string!(LEI);
+impl<DB> diesel::deserialize::FromSql<diesel::sql_types::Text, DB> for LEI
+where
+    DB: diesel::backend::Backend,
+    String: diesel::deserialize::FromSql<diesel::sql_types::Text, DB>,
+{
+    fn from_sql(bytes: diesel::backend::RawValue<DB>) -> diesel::deserialize::Result<Self> {
+        Ok(std::convert::TryFrom::try_from(
+            String::from_sql(bytes)?.as_str(),
+        )?)
+    }
+}
+
+impl<DB> diesel::serialize::ToSql<diesel::sql_types::Text, DB> for LEI
+where
+    DB: diesel::backend::Backend,
+    str: diesel::serialize::ToSql<diesel::sql_types::Text, DB>,
+{
+    fn to_sql<'b>(
+        &'b self,
+        out: &mut diesel::serialize::Output<'b, '_, DB>,
+    ) -> diesel::serialize::Result {
+        self.lei.as_str().to_sql(out)
+    }
+}
 
 impl LEI {
     pub fn random() -> Result<Self, ParseLEIError> {
