@@ -11,4 +11,3 @@ juniper = "0.15.7"
 rand = "0.7.3"
 serde = { version = "1.0.133", features = [ "derive" ] }
 thiserror = "1.0.30"
-util = { git = "https://gitlab.com/21analytics/rust-crates.git", rev = "af5aa195bb86845b3f0194e53ccb5bb4b3dc4070" }
