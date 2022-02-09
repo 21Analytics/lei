@@ -82,10 +82,12 @@ impl LEI {
         let mut rng = rand::thread_rng();
         let prefix: String = (0..4)
             .map(|_| rng.sample(rand::distributions::Alphanumeric))
+            .map(char::from)
             .collect::<String>()
             .to_uppercase();
         let infix: String = (0..12)
             .map(|_| rng.sample(rand::distributions::Alphanumeric))
+            .map(char::from)
             .collect::<String>()
             .to_uppercase();
         // Use placeholder 0s to compute needed checksum
