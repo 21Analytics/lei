@@ -1,5 +1,4 @@
 use rand::Rng;
-use std::str::FromStr;
 
 /// A 20-character Legal Entity Identifier
 /// The checksum validation happens according to ISO7064, similarly to
@@ -31,24 +30,16 @@ impl std::fmt::Display for LEI {
     }
 }
 
-impl std::str::FromStr for LEI {
-    type Err = ParseLEIError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() != 20 {
-            return Err(ParseLEIError("invalid length"));
-        }
-        if !validate_checksum(s) {
-            return Err(ParseLEIError("invalid checksum"));
-        }
-        Ok(Self { lei: s.into() })
-    }
-}
-
 impl TryFrom<&str> for LEI {
     type Error = ParseLEIError;
     fn try_from(from: &str) -> Result<Self, Self::Error> {
-        Self::from_str(from)
+        if from.len() != 20 {
+            return Err(ParseLEIError("invalid length"));
+        }
+        if !validate_checksum(from) {
+            return Err(ParseLEIError("invalid checksum"));
+        }
+        Ok(Self { lei: from.into() })
     }
 }
 
@@ -92,7 +83,7 @@ impl LEI {
             .to_uppercase();
         // Use placeholder 0s to compute needed checksum
         let checksum = 98 - mod_97(&format!("{prefix}00{infix}00"))?;
-        Self::from_str(&format!("{prefix}00{infix}{checksum:02}"))
+        Self::try_from(format!("{prefix}00{infix}{checksum:02}").as_str())
     }
 
     /// The issuing Local Operating Unit
@@ -126,7 +117,6 @@ fn mod_97(address: &str) -> Result<u32, ParseLEIError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::str::FromStr;
 
     #[test]
     fn test_mod_97() {
@@ -150,37 +140,37 @@ mod tests {
     #[test]
     fn test_happy_parse() {
         // from https://lei.info/portal/resources/lei-code/
-        let lei = LEI::from_str("2594007XIACKNMUAW223").unwrap();
+        let lei = LEI::try_from("2594007XIACKNMUAW223").unwrap();
         assert_eq!(lei.lou(), String::from("2594"));
         assert_eq!(lei.entity(), String::from("7XIACKNMUAW2"));
         // from https://en.wikipedia.org/wiki/Legal_Entity_Identifier
-        LEI::from_str("54930084UKLVMY22DS16").unwrap();
-        LEI::from_str("213800WSGIIZCXF1P572").unwrap();
-        LEI::from_str("5493000IBP32UQZ0KL24").unwrap();
+        LEI::try_from("54930084UKLVMY22DS16").unwrap();
+        LEI::try_from("213800WSGIIZCXF1P572").unwrap();
+        LEI::try_from("5493000IBP32UQZ0KL24").unwrap();
         // Standard Chartered Bank
-        LEI::from_str("RILFO74KP1CM8P6PCT96").unwrap();
+        LEI::try_from("RILFO74KP1CM8P6PCT96").unwrap();
     }
 
     #[test]
     fn test_malformed() {
         assert_eq!(
-            LEI::from_str("").unwrap_err().to_string(),
+            LEI::try_from("").unwrap_err().to_string(),
             "ParseLeiError: invalid length"
         );
         assert_eq!(
-            LEI::from_str("2594007XIACKNUAW223")
+            LEI::try_from("2594007XIACKNUAW223")
                 .unwrap_err()
                 .to_string(),
             "ParseLeiError: invalid length"
         );
         assert_eq!(
-            LEI::from_str("2594007XIACKNUAW22334")
+            LEI::try_from("2594007XIACKNUAW22334")
                 .unwrap_err()
                 .to_string(),
             "ParseLeiError: invalid length"
         );
         assert_eq!(
-            LEI::from_str("2594007XIACKNMUAW224")
+            LEI::try_from("2594007XIACKNMUAW224")
                 .unwrap_err()
                 .to_string(),
             "ParseLeiError: invalid checksum"
