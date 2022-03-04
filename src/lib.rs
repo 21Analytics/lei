@@ -12,8 +12,8 @@ use rand::Rng;
     PartialEq,
     serde::Serialize,
     serde::Deserialize,
-    diesel::FromSqlRow,
-    diesel::AsExpression,
+    diesel::deserialize::FromSqlRow,
+    diesel::expression::AsExpression,
     codegen::GraphQLScalar,
 )]
 #[diesel(sql_type = diesel::sql_types::Text)]
