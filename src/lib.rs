@@ -28,7 +28,7 @@ pub struct ParseLEIError(&'static str);
 
 impl std::fmt::Display for LEI {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.lei)
+        self.lei.fmt(f)
     }
 }
 
