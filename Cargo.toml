@@ -9,7 +9,7 @@ doctest = false
 
 [dependencies]
 codegen = { path = "../codegen" }
-diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "c06aa5ed88d2670d6e0d68124a6b426f22ab5079", default-features = false }
+diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "42413462fbb67d6b4b612f1f62ba9f8af465d920", default-features = false }
 juniper = "0.15.9"
 rand = "0.8.5"
 serde = { version = "1.0.137", features = [ "derive" ] }
