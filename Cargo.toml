@@ -12,5 +12,5 @@ codegen = { path = "../codegen" }
 diesel = { git = "https://github.com/diesel-rs/diesel.git", rev = "cbdfee30b206fff0aba62fa482fd837c0edd2cea", default-features = false }
 juniper = "0.15.9"
 rand = "0.8.5"
-serde = { version = "1.0.139", features = [ "derive" ] }
+serde = { version = "1.0.140", features = [ "derive" ] }
 thiserror = "1.0.31"
