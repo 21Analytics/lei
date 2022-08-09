@@ -12,5 +12,5 @@ codegen = { path = "../codegen" }
 diesel = { version = "2.0.0-rc.1", default-features = false }
 juniper = "0.15.10"
 rand = "0.8.5"
-serde = { version = "1.0.142", features = [ "derive" ] }
+serde = { version = "1.0.143", features = [ "derive" ] }
 thiserror = "1.0.32"
