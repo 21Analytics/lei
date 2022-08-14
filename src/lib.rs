@@ -10,6 +10,7 @@ use rand::Rng;
     Clone,
     Debug,
     PartialEq,
+    Eq,
     serde::Serialize,
     serde::Deserialize,
     diesel::deserialize::FromSqlRow,
@@ -22,7 +23,7 @@ pub struct LEI {
     lei: String,
 }
 
-#[derive(thiserror::Error, Debug, PartialEq)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq)]
 #[error("ParseLeiError: {0}")]
 pub struct ParseLEIError(&'static str);
 
