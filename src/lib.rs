@@ -15,13 +15,14 @@ use rand::Rng;
     serde::Deserialize,
     diesel::deserialize::FromSqlRow,
     diesel::expression::AsExpression,
-    codegen::GraphQLScalar,
 )]
 #[diesel(sql_type = diesel::sql_types::Text)]
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
 }
+
+async_graphql::scalar!(LEI);
 
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
 #[error("ParseLeiError: {0}")]

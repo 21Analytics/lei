@@ -8,9 +8,8 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-codegen = { path = "../codegen" }
+async-graphql = { version = "4.0.12", features = [ "chrono" ] }
 diesel = { version = "2.0.0", default-features = false }
-juniper = "0.15.10"
 rand = "0.8.5"
 serde = { version = "1.0.144", features = [ "derive" ] }
 thiserror = "1.0.32"
