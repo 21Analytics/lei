@@ -12,7 +12,6 @@ use rand::Rng;
     PartialEq,
     Eq,
     serde::Serialize,
-    serde::Deserialize,
     diesel::deserialize::FromSqlRow,
     diesel::expression::AsExpression,
 )]
@@ -20,6 +19,13 @@ use rand::Rng;
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
+}
+
+impl<'de> serde::Deserialize<'de> for LEI {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let string: String = serde::Deserialize::deserialize(d)?;
+        string.as_str().try_into().map_err(serde::de::Error::custom)
+    }
 }
 
 async_graphql::scalar!(LEI);
