@@ -1,5 +1,6 @@
 pub mod registration_authority;
 
+use anyhow::{Context, Result};
 use rand::Rng;
 
 /// A 20-character Legal Entity Identifier
@@ -24,15 +25,15 @@ pub struct LEI {
 impl<'de> serde::Deserialize<'de> for LEI {
     fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
         let string: String = serde::Deserialize::deserialize(d)?;
-        string.as_str().try_into().map_err(serde::de::Error::custom)
+        string
+            .as_str()
+            .try_into()
+            .context("LEI is not valid")
+            .map_err(serde::de::Error::custom)
     }
 }
 
 async_graphql::scalar!(LEI);
-
-#[derive(thiserror::Error, Debug, PartialEq, Eq)]
-#[error("ParseLeiError: {0}")]
-pub struct ParseLEIError(&'static str);
 
 impl std::fmt::Display for LEI {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -41,13 +42,13 @@ impl std::fmt::Display for LEI {
 }
 
 impl TryFrom<&str> for LEI {
-    type Error = ParseLEIError;
+    type Error = anyhow::Error;
     fn try_from(from: &str) -> Result<Self, Self::Error> {
         if from.len() != 20 {
-            return Err(ParseLEIError("invalid length"));
+            anyhow::bail!("invalid length: {}, must be 20", from.len())
         }
         if !validate_checksum(from) {
-            return Err(ParseLEIError("invalid checksum"));
+            anyhow::bail!("invalid checksum")
         }
         Ok(Self { lei: from.into() })
     }
@@ -79,7 +80,7 @@ where
 }
 
 impl LEI {
-    pub fn random() -> Result<Self, ParseLEIError> {
+    pub fn random() -> Result<Self> {
         let mut rng = rand::thread_rng();
         let prefix: String = (0..4)
             .map(|_| rng.sample(rand::distributions::Alphanumeric))
@@ -109,19 +110,22 @@ impl LEI {
 }
 
 fn validate_checksum(address: &str) -> bool {
-    mod_97(address) == Ok(1)
+    mod_97(address).map_or_else(|_| false, |m| m == 1)
 }
 
-fn mod_97(address: &str) -> Result<u32, ParseLEIError> {
-    address.as_bytes().iter().try_fold(0, |acc, c| {
-        // Convert '0'-'Z' to 0-35
-        (*c as char)
-            .to_digit(36)
-            .map_or(Err(ParseLEIError("invalid character")), |digit| {
-                let multiplier = if digit > 9 { 100 } else { 10 };
-                Ok((acc * multiplier + digit) % 97)
-            })
-    })
+fn mod_97(address: &str) -> Result<u32> {
+    address
+        .as_bytes()
+        .iter()
+        .enumerate()
+        .try_fold(0, |acc, (i, c)| {
+            // Convert '0'-'Z' to 0-35
+            let digit = (*c as char)
+                .to_digit(36)
+                .context(format!("invalid character at position {i}: {c}"))?;
+            let multiplier = if digit > 9 { 100 } else { 10 };
+            Ok((acc * multiplier + digit) % 97)
+        })
 }
 
 #[cfg(test)]
@@ -130,21 +134,21 @@ mod tests {
 
     #[test]
     fn test_mod_97() {
-        assert_eq!(mod_97(""), Ok(0));
-        assert_eq!(mod_97("1"), Ok(1));
-        assert_eq!(mod_97("02"), Ok(2));
-        assert_eq!(mod_97("96"), Ok(96));
-        assert_eq!(mod_97("97"), Ok(0));
-        assert_eq!(mod_97("98"), Ok(1));
-        assert_eq!(mod_97("9799"), Ok(2));
-        assert_eq!(
-            mod_97("-1").unwrap_err().to_string(),
-            "ParseLeiError: invalid character"
-        );
-        assert_eq!(
-            mod_97("123#").unwrap_err().to_string(),
-            "ParseLeiError: invalid character"
-        );
+        assert_eq!(mod_97("").unwrap(), 0);
+        assert_eq!(mod_97("1").unwrap(), 1);
+        assert_eq!(mod_97("02").unwrap(), 2);
+        assert_eq!(mod_97("96").unwrap(), 96);
+        assert_eq!(mod_97("97").unwrap(), 0);
+        assert_eq!(mod_97("98").unwrap(), 1);
+        assert_eq!(mod_97("9799").unwrap(), 2);
+        assert!(mod_97("-1")
+            .unwrap_err()
+            .to_string()
+            .starts_with("invalid character"));
+        assert!(mod_97("123#")
+            .unwrap_err()
+            .to_string()
+            .starts_with("invalid character"));
     }
 
     #[test]
@@ -163,27 +167,17 @@ mod tests {
 
     #[test]
     fn test_malformed() {
-        assert_eq!(
-            LEI::try_from("").unwrap_err().to_string(),
-            "ParseLeiError: invalid length"
-        );
-        assert_eq!(
-            LEI::try_from("2594007XIACKNUAW223")
+        for lei in ["", "2594007XIACKNUAW223", "2594007XIACKNUAW22334"] {
+            assert!(LEI::try_from(lei)
                 .unwrap_err()
-                .to_string(),
-            "ParseLeiError: invalid length"
-        );
-        assert_eq!(
-            LEI::try_from("2594007XIACKNUAW22334")
-                .unwrap_err()
-                .to_string(),
-            "ParseLeiError: invalid length"
-        );
+                .to_string()
+                .starts_with("invalid length"));
+        }
         assert_eq!(
             LEI::try_from("2594007XIACKNMUAW224")
                 .unwrap_err()
                 .to_string(),
-            "ParseLeiError: invalid checksum"
+            "invalid checksum"
         );
     }
 
