@@ -12,4 +12,4 @@ async-graphql = { version = "4.0.12", features = [ "chrono" ] }
 diesel = { version = "2.0.0", default-features = false }
 rand = "0.8.5"
 serde = { version = "1.0.144", features = [ "derive" ] }
-thiserror = "1.0.32"
+thiserror = "1.0.34"
