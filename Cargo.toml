@@ -8,7 +8,7 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-anyhow = "1.0.62"
+anyhow = "1.0.65"
 async-graphql = { version = "4.0.13", features = [ "chrono" ] }
 diesel = { version = "2.0.0", default-features = false }
 rand = "0.8.5"
