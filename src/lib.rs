@@ -96,17 +96,6 @@ impl LEI {
         let checksum = 98 - mod_97(&format!("{prefix}00{infix}00"))?;
         Self::try_from(format!("{prefix}00{infix}{checksum:02}").as_str())
     }
-
-    /// The issuing Local Operating Unit
-    #[must_use]
-    pub fn lou(&self) -> String {
-        self.lei.get(..4).unwrap().into()
-    }
-
-    #[must_use]
-    pub fn entity(&self) -> String {
-        self.lei.get(6..18).unwrap().into()
-    }
 }
 
 fn validate_checksum(address: &str) -> bool {
@@ -154,9 +143,7 @@ mod tests {
     #[test]
     fn test_happy_parse() {
         // from https://lei.info/portal/resources/lei-code/
-        let lei = LEI::try_from("2594007XIACKNMUAW223").unwrap();
-        assert_eq!(lei.lou(), String::from("2594"));
-        assert_eq!(lei.entity(), String::from("7XIACKNMUAW2"));
+        LEI::try_from("2594007XIACKNMUAW223").unwrap();
         // from https://en.wikipedia.org/wiki/Legal_Entity_Identifier
         LEI::try_from("54930084UKLVMY22DS16").unwrap();
         LEI::try_from("213800WSGIIZCXF1P572").unwrap();
