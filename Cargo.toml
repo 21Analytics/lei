@@ -9,7 +9,7 @@ doctest = false
 
 [dependencies]
 anyhow = "1.0.69"
-async-graphql = { version = "5.0.6", default-features = false, features = [ "chrono" ] }
+async-graphql = { version = "5.0.7", default-features = false, features = [ "chrono" ] }
 diesel = { version = "2.0.3", default-features = false }
 rand = "0.8.5"
 serde = { version = "1.0.160", features = [ "derive" ] }
