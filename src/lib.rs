@@ -22,16 +22,12 @@ type Result<T> = std::result::Result<T, Error>;
 /// The checksum validation happens according to ISO7064, similarly to
 /// IBAN numbers.
 /// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
-#[derive(
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    serde::Serialize,
-    diesel::deserialize::FromSqlRow,
-    diesel::expression::AsExpression,
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+#[cfg_attr(
+    feature = "diesel",
+    derive(diesel::deserialize::FromSqlRow, diesel::expression::AsExpression)
 )]
-#[diesel(sql_type = diesel::sql_types::Text)]
+#[cfg_attr(feature = "diesel", diesel(sql_type = diesel::sql_types::Text))]
 #[serde(transparent)]
 pub struct LEI {
     lei: String,
@@ -44,6 +40,7 @@ impl<'de> serde::Deserialize<'de> for LEI {
     }
 }
 
+#[cfg(feature = "async-graphql")]
 async_graphql::scalar!(LEI);
 
 impl std::fmt::Display for LEI {
@@ -65,6 +62,7 @@ impl TryFrom<&str> for LEI {
     }
 }
 
+#[cfg(feature = "diesel")]
 impl<DB> diesel::deserialize::FromSql<diesel::sql_types::Text, DB> for LEI
 where
     DB: diesel::backend::Backend,
@@ -77,6 +75,7 @@ where
     }
 }
 
+#[cfg(feature = "diesel")]
 impl<DB> diesel::serialize::ToSql<diesel::sql_types::Text, DB> for LEI
 where
     DB: diesel::backend::Backend,
