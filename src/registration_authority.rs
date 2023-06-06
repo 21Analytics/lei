@@ -3,8 +3,7 @@ pub fn is(s: &str) -> bool {
     REGISTRATION_AUTHORITIES.contains(&s)
 }
 
-// extract from current .csv in data/ with
-// cut -d, -f1 ra-list.csv
+/// extracted from 2019-12-05_ra-list-v1.5
 const REGISTRATION_AUTHORITIES: [&str; 737] = [
     "RA888888", "RA999999", "RA000001", "RA000002", "RA000003", "RA000004", "RA000661", "RA000005",
     "RA000006", "RA000007", "RA000008", "RA000009", "RA000010", "RA000011", "RA000012", "RA000013",
