@@ -1,7 +1,22 @@
 pub mod registration_authority;
 
-use anyhow::{Context, Result};
 use rand::Rng;
+
+/// The errors emitted when parsing a LEI.
+#[derive(Debug, PartialEq, thiserror::Error)]
+pub enum Error {
+    /// The LEI had an invalid length.
+    #[error("invalid length: {0}, expected 20")]
+    InvalidLength(usize),
+    /// The LEI had an invalid checksum.
+    #[error("invalid checksum")]
+    InvalidChecksum,
+    /// The LEI contained an invalid character.
+    #[error("invalid character at position {pos}: {char}")]
+    InvalidChar { pos: usize, char: char },
+}
+
+type Result<T> = std::result::Result<T, Error>;
 
 /// A 20-character Legal Entity Identifier
 /// The checksum validation happens according to ISO7064, similarly to
@@ -23,13 +38,9 @@ pub struct LEI {
 }
 
 impl<'de> serde::Deserialize<'de> for LEI {
-    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
         let string: String = serde::Deserialize::deserialize(d)?;
-        string
-            .as_str()
-            .try_into()
-            .context("LEI is not valid")
-            .map_err(serde::de::Error::custom)
+        string.as_str().try_into().map_err(serde::de::Error::custom)
     }
 }
 
@@ -42,13 +53,13 @@ impl std::fmt::Display for LEI {
 }
 
 impl TryFrom<&str> for LEI {
-    type Error = anyhow::Error;
-    fn try_from(from: &str) -> Result<Self, Self::Error> {
+    type Error = Error;
+    fn try_from(from: &str) -> Result<Self> {
         if from.len() != 20 {
-            anyhow::bail!("invalid length: {}, must be 20", from.len())
+            return Err(Error::InvalidLength(from.len()));
         }
         if !validate_checksum(from) {
-            anyhow::bail!("invalid checksum")
+            return Err(Error::InvalidChecksum);
         }
         Ok(Self { lei: from.into() })
     }
@@ -109,9 +120,10 @@ fn mod_97(address: &str) -> Result<u32> {
         .enumerate()
         .try_fold(0, |acc, (i, c)| {
             // Convert '0'-'Z' to 0-35
-            let digit = (*c as char)
-                .to_digit(36)
-                .context(format!("invalid character at position {i}: {c}"))?;
+            let digit = (*c as char).to_digit(36).ok_or(Error::InvalidChar {
+                pos: i,
+                char: *c as char,
+            })?;
             let multiplier = if digit > 9 { 100 } else { 10 };
             Ok((acc * multiplier + digit) % 97)
         })
@@ -130,14 +142,14 @@ mod tests {
         assert_eq!(mod_97("97").unwrap(), 0);
         assert_eq!(mod_97("98").unwrap(), 1);
         assert_eq!(mod_97("9799").unwrap(), 2);
-        assert!(mod_97("-1")
-            .unwrap_err()
-            .to_string()
-            .starts_with("invalid character"));
-        assert!(mod_97("123#")
-            .unwrap_err()
-            .to_string()
-            .starts_with("invalid character"));
+        assert_eq!(
+            mod_97("-1").unwrap_err(),
+            Error::InvalidChar { pos: 0, char: '-' }
+        );
+        assert_eq!(
+            mod_97("123#").unwrap_err(),
+            Error::InvalidChar { pos: 3, char: '#' }
+        );
     }
 
     #[test]
@@ -155,16 +167,14 @@ mod tests {
     #[test]
     fn test_malformed() {
         for lei in ["", "2594007XIACKNUAW223", "2594007XIACKNUAW22334"] {
-            assert!(LEI::try_from(lei)
-                .unwrap_err()
-                .to_string()
-                .starts_with("invalid length"));
+            assert_eq!(
+                LEI::try_from(lei).unwrap_err(),
+                Error::InvalidLength(lei.len())
+            );
         }
         assert_eq!(
-            LEI::try_from("2594007XIACKNMUAW224")
-                .unwrap_err()
-                .to_string(),
-            "invalid checksum"
+            LEI::try_from("2594007XIACKNMUAW224").unwrap_err(),
+            Error::InvalidChecksum
         );
     }
 
