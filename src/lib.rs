@@ -1,3 +1,18 @@
+//! # Rust LEI Library
+//!
+//! This crate provides functionality to work with Legal Entity
+//! Identifiers (LEIs):
+//!
+//! ```
+//! use leim as lei;
+//! assert!(lei::LEI::try_from("2594007XIACKNMUAW223").is_ok());
+//! assert_eq!(
+//!     lei::LEI::try_from("2594007XIACKNMUAW222"),
+//!     Err(lei::Error::InvalidChecksum)
+//! );
+//! ```
+
+/// Functionality related to registration authorities.
 pub mod registration_authority;
 
 use rand::Rng;
@@ -18,9 +33,8 @@ pub enum Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
-/// A 20-character Legal Entity Identifier
-/// The checksum validation happens according to ISO7064, similarly to
-/// IBAN numbers.
+/// A 20-character Legal Entity Identifier. The checksum validation
+/// happens according to ISO7064, similarly to  IBAN numbers.
 /// <https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure>
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 #[cfg_attr(
@@ -41,6 +55,7 @@ impl<'de> serde::Deserialize<'de> for LEI {
 }
 
 #[cfg(feature = "async-graphql")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-graphql")))]
 async_graphql::scalar!(LEI);
 
 impl std::fmt::Display for LEI {
@@ -63,6 +78,7 @@ impl TryFrom<&str> for LEI {
 }
 
 #[cfg(feature = "diesel")]
+#[cfg_attr(docsrs, doc(cfg(feature = "diesel")))]
 impl<DB> diesel::deserialize::FromSql<diesel::sql_types::Text, DB> for LEI
 where
     DB: diesel::backend::Backend,
@@ -76,6 +92,7 @@ where
 }
 
 #[cfg(feature = "diesel")]
+#[cfg_attr(docsrs, doc(cfg(feature = "diesel")))]
 impl<DB> diesel::serialize::ToSql<diesel::sql_types::Text, DB> for LEI
 where
     DB: diesel::backend::Backend,
@@ -90,6 +107,8 @@ where
 }
 
 impl LEI {
+    /// Constructs a random LEI with a valid checksum (only for
+    /// testing purposes).
     pub fn random() -> Self {
         let mut rng = rand::thread_rng();
         let prefix: String = (0..4)

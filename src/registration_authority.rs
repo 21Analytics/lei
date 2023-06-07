@@ -1,3 +1,5 @@
+/// Checks whether a given string is on a list
+/// of known registration authorities.
 #[must_use]
 pub fn is(s: &str) -> bool {
     REGISTRATION_AUTHORITIES.contains(&s)

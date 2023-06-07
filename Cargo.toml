@@ -11,6 +11,10 @@ repository = "https://gitlab.com/21analytics/lei"
 keywords = ["lei", "iso-17442"]
 categories = ["finance"]
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [dependencies]
 async-graphql = { optional = true, version = "5", default-features = false, features = [ "chrono" ] }
 diesel = { optional = true, version = "2", default-features = false }
