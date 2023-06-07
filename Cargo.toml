@@ -3,6 +3,7 @@ name = "leim"
 version = "0.1.0"
 authors = ["21Analytics <info@21analytics.ch>"]
 edition = "2021"
+license = "MIT"
 
 [lib]
 doctest = false
