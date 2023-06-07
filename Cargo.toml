@@ -1,12 +1,15 @@
 [package]
 name = "leim"
 version = "0.1.0"
-authors = ["21Analytics <info@21analytics.ch>"]
+authors = ["21 Analytics <info@21analytics.ch>"]
 edition = "2021"
 license = "MIT"
-
-[lib]
-doctest = false
+description = "A library to handle Legal Entity Identifiers (LEIs)"
+documentation = "https://docs.rs/leim/"
+homepage = "https://21analytics.ch"
+repository = "https://gitlab.com/21analytics/lei"
+keywords = ["lei", "iso-17442"]
+categories = ["finance"]
 
 [dependencies]
 async-graphql = { optional = true, version = "5", default-features = false, features = [ "chrono" ] }
