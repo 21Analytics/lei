@@ -90,7 +90,7 @@ where
 }
 
 impl LEI {
-    pub fn random() -> Result<Self> {
+    pub fn random() -> Self {
         let mut rng = rand::thread_rng();
         let prefix: String = (0..4)
             .map(|_| rng.sample(rand::distributions::Alphanumeric))
@@ -103,8 +103,8 @@ impl LEI {
             .collect::<String>()
             .to_uppercase();
         // Use placeholder 0s to compute needed checksum
-        let checksum = 98 - mod_97(&format!("{prefix}00{infix}00"))?;
-        Self::try_from(format!("{prefix}00{infix}{checksum:02}").as_str())
+        let checksum = 98 - mod_97(&format!("{prefix}00{infix}00")).unwrap();
+        Self::try_from(format!("{prefix}00{infix}{checksum:02}").as_str()).unwrap()
     }
 }
 
@@ -179,6 +179,6 @@ mod tests {
 
     #[test]
     fn test_random() {
-        LEI::random().unwrap();
+        LEI::random();
     }
 }
