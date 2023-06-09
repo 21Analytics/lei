@@ -127,13 +127,12 @@ impl LEI {
     }
 }
 
-fn validate_checksum(address: &str) -> bool {
-    mod_97(address).map_or_else(|_| false, |m| m == 1)
+fn validate_checksum(lei: &str) -> bool {
+    mod_97(lei).map_or_else(|_| false, |m| m == 1)
 }
 
-fn mod_97(address: &str) -> Result<u32> {
-    address
-        .as_bytes()
+fn mod_97(lei: &str) -> Result<u32> {
+    lei.as_bytes()
         .iter()
         .enumerate()
         .try_fold(0, |acc, (i, c)| {

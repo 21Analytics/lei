@@ -1,7 +1,7 @@
 /// Checks whether a given string is on a list
 /// of known registration authorities.
 #[must_use]
-pub fn is(s: &str) -> bool {
+pub fn is_valid_ra(s: &str) -> bool {
     REGISTRATION_AUTHORITIES.contains(&s)
 }
 
@@ -108,13 +108,13 @@ mod tests {
 
     #[test]
     fn test_placeholders() {
-        assert!(is("RA888888"));
-        assert!(is("RA999999"));
+        assert!(is_valid_ra("RA888888"));
+        assert!(is_valid_ra("RA999999"));
     }
 
     #[test]
     fn test_is() {
-        assert!(is("RA000001"));
-        assert!(!is("RA100001"));
+        assert!(is_valid_ra("RA000001"));
+        assert!(!is_valid_ra("RA100001"));
     }
 }
