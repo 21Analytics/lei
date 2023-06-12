@@ -1,6 +1,6 @@
 [package]
 name = "leim"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["21 Analytics <info@21analytics.ch>"]
 edition = "2021"
 license = "MIT"
@@ -17,7 +17,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 async-graphql = { optional = true, version = "5", default-features = false, features = [ "chrono" ] }
-diesel = { optional = true, version = "2", default-features = false }
+diesel = { optional = true, version = "2.0.*", default-features = false }
 rand = "0.8"
 serde = { version = "1", features = [ "derive" ] }
 thiserror = "1"
