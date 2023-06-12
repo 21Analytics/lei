@@ -89,7 +89,7 @@ where
     DB: diesel::backend::Backend,
     String: diesel::deserialize::FromSql<diesel::sql_types::Text, DB>,
 {
-    fn from_sql(bytes: diesel::backend::RawValue<DB>) -> diesel::deserialize::Result<Self> {
+    fn from_sql(bytes: DB::RawValue<'_>) -> diesel::deserialize::Result<Self> {
         Ok(std::convert::TryFrom::try_from(
             String::from_sql(bytes)?.as_str(),
         )?)
