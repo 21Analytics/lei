@@ -12,6 +12,8 @@
 //! );
 //! ```
 
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 /// Functionality related to registration authorities.
 pub mod registration_authority;
 
