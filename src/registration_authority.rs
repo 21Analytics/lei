@@ -1,7 +1,31 @@
-/// Checks whether a given string is on a list
-/// of known registration authorities.
+/// A registration authority.
+///
+/// See <https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list>
+#[derive(Clone, Debug, PartialEq, Eq, serde::Deserialize)]
+#[serde(try_from = "&str")]
+pub struct RegistrationAuthority {
+    inner: String,
+}
+
+impl serde::Serialize for RegistrationAuthority {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.inner.serialize(serializer)
+    }
+}
+
+impl TryFrom<&str> for RegistrationAuthority {
+    type Error = crate::Error;
+    fn try_from(from: &str) -> Result<Self, Self::Error> {
+        if is_valid_ra(from) {
+            Ok(Self { inner: from.into() })
+        } else {
+            Err(crate::Error::UnknownRegistrationAuthority(from.into()))
+        }
+    }
+}
+
 #[must_use]
-pub fn is_valid_ra(s: &str) -> bool {
+fn is_valid_ra(s: &str) -> bool {
     REGISTRATION_AUTHORITIES.contains(&s)
 }
 
@@ -105,6 +129,7 @@ const REGISTRATION_AUTHORITIES: [&str; 737] = [
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_test::{assert_tokens, Token};
 
     #[test]
     fn test_placeholders() {
@@ -116,5 +141,28 @@ mod tests {
     fn test_is() {
         assert!(is_valid_ra("RA000001"));
         assert!(!is_valid_ra("RA100001"));
+    }
+
+    #[test]
+    fn test_registration_authority_invalid_length() {
+        serde_test::assert_de_tokens_error::<RegistrationAuthority>(
+            &[Token::BorrowedStr("RA00009")],
+            "unknown registration authority: RA00009",
+        );
+        serde_test::assert_de_tokens_error::<RegistrationAuthority>(
+            &[Token::BorrowedStr("RA0000945")],
+            "unknown registration authority: RA0000945",
+        );
+    }
+
+    #[test]
+    fn test_registration_authority_invalid_value() {
+        assert!(RegistrationAuthority::try_from("RA100094").is_err());
+    }
+
+    #[test]
+    fn test_registration_authority() {
+        let ra: RegistrationAuthority = "RA000094".try_into().unwrap();
+        assert_tokens(&ra, &[Token::BorrowedStr("RA000094")]);
     }
 }

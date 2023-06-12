@@ -31,6 +31,9 @@ pub enum Error {
     /// The LEI contained an invalid character.
     #[error("invalid character at position {pos}: {char}")]
     InvalidChar { pos: usize, char: char },
+    /// The registration authority was not known.
+    #[error("unknown registration authority: {0}")]
+    UnknownRegistrationAuthority(String),
 }
 
 type Result<T> = std::result::Result<T, Error>;

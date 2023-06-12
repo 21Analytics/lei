@@ -21,3 +21,6 @@ diesel = { optional = true, version = "2.0.*", default-features = false }
 rand = "0.8"
 serde = { version = "1", features = [ "derive" ] }
 thiserror = "1"
+
+[dev-dependencies]
+serde_test = "1.0.163"
