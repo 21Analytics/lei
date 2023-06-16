@@ -174,14 +174,10 @@ mod tests {
     use serde_test::{assert_tokens, Token};
 
     #[test]
-    fn test_placeholders() {
+    fn test_ra_index() {
+        assert!(ra_index("RA000001").is_some());
         assert!(ra_index("RA888888").is_some());
         assert!(ra_index("RA999999").is_some());
-    }
-
-    #[test]
-    fn test_is() {
-        assert!(ra_index("RA000001").is_some());
         assert_eq!(ra_index("RA100001"), None);
     }
 
