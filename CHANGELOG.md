@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.2.0](https://gitlab.com/21analytics/lei/-/tags/0.2.0) - 2023-06-19
+
 - Added a new `RegistrationAuthority` type.
 - Updated the registration authority list to [v1.7](https://www.gleif.org/about-lei/code-lists/gleif-registration-authorities-list/2022-03-23_ra_list_v1.7.xlsx).
 - Pinned the minimum required `diesel` version to `2.1.0`. and fixed
